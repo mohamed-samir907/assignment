@@ -2,10 +2,11 @@
 
 namespace App\Services;
 
-use App\Serializers\ItemSerializer;
-use App\Serializers\ItemsSerializer;
+use App\Http\Resources\ItemResource;
 use League\CommonMark\CommonMarkConverter;
+use Illuminate\Http\Resources\Json\JsonResource;
 use App\Repositories\Item\ItemRepositoryInterface;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class ItemService
 {
@@ -20,34 +21,30 @@ class ItemService
         $this->converter = $converter;
     }
 
-    public function index()
+    public function index(): ResourceCollection
     {
         $items = $this->repo->all();
 
-        return (new ItemsSerializer($items))->getData();
+        return ItemResource::collection($items);
     }
 
-    public function store(array $data)
+    public function store(array $data): JsonResource
     {
         $data["description"] = $this->converter->convert($data["description"])->getContent();
 
         $item = $this->repo->create($data);
 
-        $serializer = new ItemSerializer($item);
-
-        return $serializer->getData();
+        return new ItemResource($item);
     }
 
-    public function show(int $id)
+    public function show(int $id): JsonResource
     {
         $item = $this->repo->findOrFail($id);
 
-        $serializer = new ItemSerializer($item);
-
-        return $serializer->getData();
+        return new ItemResource($item);
     }
 
-    public function update(array $data, int $id)
+    public function update(array $data, int $id): JsonResource
     {
         $item = $this->repo->findOrFail($id);
 
@@ -55,6 +52,6 @@ class ItemService
 
         $this->repo->update($item, $data);
 
-        return (new ItemSerializer($item))->getData();
+        return new ItemResource($item);
     }
 }
