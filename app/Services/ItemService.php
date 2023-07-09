@@ -2,30 +2,36 @@
 
 namespace App\Services;
 
-use App\Models\Item;
 use App\Serializers\ItemSerializer;
 use App\Serializers\ItemsSerializer;
 use League\CommonMark\CommonMarkConverter;
+use App\Repositories\Item\ItemRepositoryInterface;
 
 class ItemService
 {
+    private ItemRepositoryInterface $repo;
+    private CommonMarkConverter $converter;
+
+    public function __construct(
+        ItemRepositoryInterface $repo,
+        CommonMarkConverter $converter
+    ) {
+        $this->repo = $repo;
+        $this->converter = $converter;
+    }
+
     public function index()
     {
-        $items = Item::all();
+        $items = $this->repo->all();
 
         return (new ItemsSerializer($items))->getData();
     }
 
     public function store(array $data)
     {
-        $converter = new CommonMarkConverter(['html_input' => 'escape', 'allow_unsafe_links' => false]);
+        $data["description"] = $this->converter->convert($data["description"])->getContent();
 
-        $item = Item::create([
-            'name' => $data["name"],
-            'price' => $data["price"],
-            'url' => $data["url"],
-            'description' => $converter->convert($data["description"])->getContent(),
-        ]);
+        $item = $this->repo->create($data);
 
         $serializer = new ItemSerializer($item);
 
@@ -34,7 +40,7 @@ class ItemService
 
     public function show(int $id)
     {
-        $item = Item::findOrFail($id);
+        $item = $this->repo->findOrFail($id);
 
         $serializer = new ItemSerializer($item);
 
@@ -43,14 +49,11 @@ class ItemService
 
     public function update(array $data, int $id)
     {
-        $converter = new CommonMarkConverter(['html_input' => 'escape', 'allow_unsafe_links' => false]);
+        $item = $this->repo->findOrFail($id);
 
-        $item = Item::findOrFail($id);
-        $item->name = $data["name"];
-        $item->url = $data["url"];
-        $item->price = $data["price"];
-        $item->description = $converter->convert($data["description"])->getContent();
-        $item->save();
+        $data["description"] = $this->converter->convert($data["description"])->getContent();
+
+        $this->repo->update($item, $data);
 
         return (new ItemSerializer($item))->getData();
     }
