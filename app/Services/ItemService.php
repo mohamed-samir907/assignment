@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DTOs\ItemData;
 use App\Http\Resources\ItemResource;
 use League\CommonMark\CommonMarkConverter;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -30,9 +31,14 @@ class ItemService
 
     public function store(array $data): JsonResource
     {
-        $data["description"] = $this->converter->convert($data["description"])->getContent();
+        $dto = new ItemData(
+            name: $data["name"],
+            price: $data["price"],
+            url: $data["url"],
+            description: $this->converter->convert($data["description"])->getContent()
+        );
 
-        $item = $this->repo->create($data);
+        $item = $this->repo->create($dto);
 
         return new ItemResource($item);
     }
@@ -48,9 +54,14 @@ class ItemService
     {
         $item = $this->repo->findOrFail($id);
 
-        $data["description"] = $this->converter->convert($data["description"])->getContent();
+        $dto = new ItemData(
+            name: $data["name"],
+            price: $data["price"],
+            url: $data["url"],
+            description: $this->converter->convert($data["description"])->getContent()
+        );
 
-        $this->repo->update($item, $data);
+        $this->repo->update($item, $dto);
 
         return new ItemResource($item);
     }

@@ -3,6 +3,7 @@
 namespace App\Repositories\Item;
 
 use App\Models\Item;
+use App\DTOs\ItemData;
 use Illuminate\Database\Eloquent\Collection;
 use App\Repositories\Item\ItemRepositoryInterface;
 
@@ -18,23 +19,23 @@ class ItemRepository implements ItemRepositoryInterface
         return Item::query()->findOrFail($id);
     }
 
-    public function create(array $data): Item
+    public function create(ItemData $data): Item
     {
         return Item::query()->create([
-            'name'          => $data["name"],
-            'price'         => $data["price"],
-            'url'           => $data["url"],
-            'description'   => $data["description"],
+            'name'          => $data->getName(),
+            'price'         => $data->getPrice(),
+            'url'           => $data->getUrl(),
+            'description'   => $data->getDescription(),
         ]);
     }
 
-    public function update(Item $item, array $data): bool
+    public function update(Item $item, ItemData $data): bool
     {
         return $item->update([
-            'name'          => $data["name"],
-            'price'         => $data["price"],
-            'url'           => $data["url"],
-            'description'   => $data["description"],
+            'name'          => $data->getName(),
+            'price'         => $data->getPrice(),
+            'url'           => $data->getUrl(),
+            'description'   => $data->getDescription(),
         ]);
     }
 }

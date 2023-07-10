@@ -3,6 +3,7 @@
 namespace App\Repositories\Item;
 
 use App\Models\Item;
+use App\DTOs\ItemData;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -28,17 +29,17 @@ interface ItemRepositoryInterface
     /**
      * Create new Item.
      *
-     * @param  array $data
+     * @param  ItemData $data
      * @return Item
      */
-    public function create(array $data): Item;
+    public function create(ItemData $data): Item;
 
     /**
      * Update an existing item.
      *
      * @param  Item $item
-     * @param  array $data
+     * @param  ItemData $data
      * @return bool
      */
-    public function update(Item $item, array $data): bool;
+    public function update(Item $item, ItemData $data): bool;
 }
