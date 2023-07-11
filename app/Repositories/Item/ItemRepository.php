@@ -4,6 +4,7 @@ namespace App\Repositories\Item;
 
 use App\Models\Item;
 use App\DTOs\ItemData;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Collection;
 use App\Repositories\Item\ItemRepositoryInterface;
 
@@ -37,5 +38,32 @@ class ItemRepository implements ItemRepositoryInterface
             'url'           => $data->getUrl(),
             'description'   => $data->getDescription(),
         ]);
+    }
+
+    public function totalCount(): int
+    {
+        return Item::count();
+    }
+
+    public function avgPrice(): float
+    {
+        return Item::avg("price") ?? 0;
+    }
+
+    public function topPriceWebsite(): string
+    {
+        return DB::table("items")
+            ->selectRaw('
+                SUBSTRING_INDEX(SUBSTRING_INDEX(url, "://", -1), "/", 1) domain,
+                SUM(price) sum_price
+            ')
+            ->groupBy("domain")
+            ->orderByDesc("sum_price")
+            ->first()?->domain ?? "";
+    }
+
+    public function periodTotalPrice(string $startDate, string $endDate): float
+    {
+        return Item::whereBetween("created_at", [$startDate, $endDate])->sum("price") ?? 0;
     }
 }

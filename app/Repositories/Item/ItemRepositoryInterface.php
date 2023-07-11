@@ -42,4 +42,12 @@ interface ItemRepositoryInterface
      * @return bool
      */
     public function update(Item $item, ItemData $data): bool;
+
+    public function totalCount(): int;
+
+    public function avgPrice(): float;
+
+    public function topPriceWebsite(): string;
+
+    public function periodTotalPrice(string $startDate, string $endDate): float;
 }
