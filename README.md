@@ -28,12 +28,17 @@ statistic should be displayed.
 Please write your answers to following questions.
 
 > **Please briefly explain your implementation of the new feature**  
->  
-> _..._
+
+I created a service that handles getting the stats by calling a repository. Then i created a controller that uses this serivce and exposed it via api endpoint. After that i created a command which uses the same service to get the stats and print them within a table.
 
 > **For the refactoring, would you change something else if you had more time?**  
->  
-> _..._
+
+
+I think the task don't have to get more changes due to its simplicty. We can do much more refactoring if we have a complex task, we will think about the best way to make it readable, maintainable, and extendable.
+**But for the current task we can do the following**
+
+1. we can use a single service for each operation but for the simplcty i used one service for all crud operations.
+2. we should use a pagination instead of getting all items at once. this will make a performance issue if we have much more data.
 
 ## Running the project
 This project requires a database to run. For the server part, you can use `php artisan serve`
