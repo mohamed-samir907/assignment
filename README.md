@@ -31,10 +31,14 @@ Please write your answers to following questions.
 
 I created a service that handles getting the stats by calling a repository. Then i created a controller that uses this serivce and exposed it via api endpoint. After that i created a command which uses the same service to get the stats and print them within a table.
 
+In this part `the website with the highest total price of its items` I had two senarios. 
+1. create a column and store on it the domain part to use it with grouping. 
+2. just use `SUBSTRING_INDEXI` to extract the domain from the url. I went with the second scenario due to i don't want to edit the database.
+
 > **For the refactoring, would you change something else if you had more time?**  
 
 
-I think the task don't have to get more changes due to its simplicty. We can do much more refactoring if we have a complex task, we will think about the best way to make it readable, maintainable, and extendable.
+I think the task don't have to get more changes. We are trying to think about the best way to make it readable, maintainable, and extendable.
 **But for the current task we can do the following**
 
 1. we can use a single service for each operation but for the simplcty i used one service for all crud operations.
